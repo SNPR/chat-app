@@ -18,7 +18,7 @@ io.on("connection", socket => {
   console.log("New WebSocket connection");
 
   socket.emit("message", generateMessage("Welcome!"));
-  socket.broadcast.emit("message", "A new user has joined!");
+  socket.broadcast.emit("message", generateMessage("A new user has joined!"));
 
   socket.on("sendMessage", (message, callback) => {
     const filter = new Filter();
@@ -27,12 +27,12 @@ io.on("connection", socket => {
       return callback("Profanity is not allowed!");
     }
 
-    io.emit("message", message);
+    io.emit("message", generateMessage(message));
     callback();
   });
 
   socket.on("disconnect", () => {
-    io.emit("message", "A user has left!");
+    io.emit("message", generateMessage("A user has left!"));
   });
 
   socket.on("sendLocation", (coordinates, callback) => {
