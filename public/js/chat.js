@@ -19,7 +19,7 @@ const { username, room } = Qs.parse(location.search, {
 });
 
 socket.on("message", message => {
-  console.log(message);
+  console.log(message.text);
 
   const html = Mustache.render(messageTemplate, {
     message: message.text,
@@ -80,4 +80,9 @@ $sendLocationButton.addEventListener("click", () => {
   });
 });
 
-socket.emit("join", { username, room });
+socket.emit("join", { username, room }, error => {
+  if (error) {
+    alert(error);
+    location.href = "/";
+  }
+});
