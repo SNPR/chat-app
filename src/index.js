@@ -45,12 +45,14 @@ io.on("connection", socket => {
 
   socket.on("sendMessage", (message, callback) => {
     const filter = new Filter();
+    const user = getUser(socket.id);
+    console.log(user);
 
     if (filter.isProfane(message)) {
       return callback("Profanity is not allowed!");
     }
 
-    io.to("test").emit("message", generateMessage(message));
+    io.to(user.room).emit("message", generateMessage(message));
     callback();
   });
 
@@ -66,7 +68,10 @@ io.on("connection", socket => {
   });
 
   socket.on("sendLocation", (coordinates, callback) => {
-    io.emit(
+    const user = getUser(socket.id);
+    console.log(user);
+
+    io.to(user.room).emit(
       "locationMessage",
       generateLocationMessage(
         `https://google.com/maps?q=${coordinates.latitude},${
