@@ -35,10 +35,13 @@ io.on("connection", socket => {
 
     socket.join(user.room);
 
-    socket.emit("message", generateMessage("Welcome!"));
+    socket.emit("message", generateMessage("Admin", "Welcome!"));
     socket.broadcast
       .to(user.room)
-      .emit("message", generateMessage(`${user.username} has joined!`));
+      .emit(
+        "message",
+        generateMessage("Admin", `${user.username} has joined!`)
+      );
 
     callback();
   });
@@ -46,13 +49,12 @@ io.on("connection", socket => {
   socket.on("sendMessage", (message, callback) => {
     const filter = new Filter();
     const user = getUser(socket.id);
-    console.log(user);
 
     if (filter.isProfane(message)) {
       return callback("Profanity is not allowed!");
     }
 
-    io.to(user.room).emit("message", generateMessage(message));
+    io.to(user.room).emit("message", generateMessage(user.username, message));
     callback();
   });
 
@@ -62,14 +64,13 @@ io.on("connection", socket => {
     if (user) {
       io.to(user.room).emit(
         "message",
-        generateMessage(`${user.username} has left!`)
+        generateMessage("Admin", `${user.username} has left!`)
       );
     }
   });
 
   socket.on("sendLocation", (coordinates, callback) => {
     const user = getUser(socket.id);
-    console.log(user);
 
     io.to(user.room).emit(
       "locationMessage",

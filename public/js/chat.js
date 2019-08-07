@@ -22,6 +22,7 @@ socket.on("message", message => {
   console.log(message.text);
 
   const html = Mustache.render(messageTemplate, {
+    username: message.username,
     message: message.text,
     createdAt: moment(message.createdAt).format("HH:mm")
   });
